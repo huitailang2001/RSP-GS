@@ -1,0 +1,54 @@
+# SG-3DGS Configuration for Zeche Dataset
+# German Ruhr-area industrial heritage: red brick buildings, dark gray roofs,
+# green wooden doors/windows, small towers, metal lattice structures
+
+# Semantic-Aware Adaptive Density Control
+sa_adc:
+  enabled: true
+  # Threshold multipliers per region type
+  alpha_linear: 0.5      # Metal towers, wires - aggressive densification
+  alpha_edge: 0.7        # Building outlines, roof edges
+  alpha_textured: 0.9    # Brick walls, lawns, paving
+  alpha_flat: 1.5        # Sky, plain road surfaces - conservative
+  # Boundary-enhanced densification
+  boundary_threshold_mult: 0.3
+  boundary_densify_interval: 500
+  # Start after initial convergence
+  sa_adc_start_iter: 3000
+  cache_update_interval: 100
+
+# Multi-Granularity Feature-Guided Loss
+mfg_loss:
+  enabled: true
+  lambda_dssim: 0.2
+  # Edge preservation for brick textures and building contours
+  edge_loss_weight: 0.05
+  edge_loss_start_iter: 3000
+  use_edge_loss: true
+  # Frequency-domain loss for high-frequency detail preservation
+  freq_loss_weight: 0.01
+  freq_loss_start_iter: 5000
+  freq_attention_threshold: 0.7
+
+# Structure-Preserving Regularization
+sp_reg:
+  enabled: true
+  # Anisotropy: encourage proper Gaussian shapes per region
+  lambda_aniso: 0.01
+  aniso_start_iter: 5000
+  linear_aspect_target: 3.0     # Towers/wires should be elongated
+  surface_flatness_target: 0.3  # Brick walls should be disk-like
+  # Opacity: reduce floaters after densification ends
+  lambda_opacity: 0.005
+  opacity_start_iter: 15000
+  # Boundary: prevent cross-boundary Gaussians
+  lambda_boundary: 0.005
+  boundary_start_iter: 5000
+  # Scale: prevent excessively large Gaussians
+  lambda_scale: 0.001
+  scale_start_iter: 3000
+  max_scale_ratio: 10.0
+
+# Data paths (relative to source_path)
+semantic_folder: "semantic"
+features_folder: "features"
